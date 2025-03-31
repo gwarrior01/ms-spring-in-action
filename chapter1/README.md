@@ -28,10 +28,3 @@ $ mvn spring-boot:run
 or 
 $ java -jar target/SimpleApplication-0.0.1-SNAPSHOT.jar
 ```
-
-## Contact
-
-I'd like you to send me an email on <illaryhs@gmail.com> about anything you'd want to say about this software.
-
-### Contributing
-Feel free to file an issue if it doesn't work for your code sample. Thanks.
