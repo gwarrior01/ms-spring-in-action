@@ -11,7 +11,7 @@
 	<groupId>club.twopages</groupId>
 	<artifactId>simple-application</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Application</name>
+	<name>Chapter 1 - Application</name>
 	<description>Simple Application - Basic Spring Boot App</description>
 
 	<properties>
