@@ -11,7 +11,7 @@
     <groupId>club.twopages</groupId>
     <artifactId>ch2-licensing-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>License Service</name>
+    <name>Chapter 2 - License Service</name>
     <description>Ostock Licensing Service</description>
 
     <properties>
