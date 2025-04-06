@@ -8,7 +8,7 @@
 		<version>3.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.huaylupo.spmia.ch01</groupId>
+	<groupId>club.twopages</groupId>
 	<artifactId>simple-application</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Application</name>
