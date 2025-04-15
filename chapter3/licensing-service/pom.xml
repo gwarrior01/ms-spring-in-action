@@ -8,10 +8,10 @@
 		<version>2.2.3.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.optimagrowth</groupId>
+	<groupId>club.twopages</groupId>
 	<artifactId>licensing-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>License Service</name>
+	<name>Chapter 3 - License Service</name>
 	<description>Ostock Licensing Service</description>
 
 	<properties>
