@@ -26,6 +26,7 @@ public class LicenseServiceApplication {
 	public ResourceBundleMessageSource messageSource() {
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 		messageSource.setUseCodeAsDefaultMessage(true);
+		messageSource.setDefaultEncoding("UTF-8");
 		messageSource.setBasenames("messages");
 		return messageSource;
 	}

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Locale;
@@ -26,16 +27,17 @@ class LicenseControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
+    @MockitoBean
     private LicenseService licenseService;
     private License license;
 
     @BeforeEach
     void setup() {
-        license = new License();
-        license.setLicenseId("123");
-        license.setOrganizationId("org1");
-        license.setProductName("Test Product");
+        license = License.builder()
+                .licenseId("123")
+                .organizationId("org1")
+                .productName("Test Product")
+                .build();
     }
 
     @Test

@@ -18,13 +18,12 @@ class LicenseServiceTest {
     @BeforeEach
     void setup() {
         messageSource = mock(MessageSource.class);
-        licenseService = new LicenseService();
-        licenseService.messages = messageSource; // Прямое присваивание, если поле не private
+        licenseService = new LicenseService(messageSource);
     }
 
     @Test
     void getLicense_shouldReturnPopulatedLicense() {
-        License license = licenseService.getLicense("L123", "ORG456");
+        var license = licenseService.getLicense("L123", "ORG456");
 
         assertThat(license).isNotNull();
         assertThat(license.getLicenseId()).isEqualTo("L123");
@@ -35,8 +34,7 @@ class LicenseServiceTest {
 
     @Test
     void createLicense_shouldReturnFormattedMessage() {
-        License license = new License();
-        license.setLicenseId("L999");
+        var license = License.builder().licenseId("L999").build();
 
         when(messageSource.getMessage(eq("license.create.message"), any(), eq(Locale.ENGLISH)))
                 .thenReturn("Created license: %s");
@@ -49,8 +47,7 @@ class LicenseServiceTest {
 
     @Test
     void updateLicense_shouldReturnFormattedMessage() {
-        License license = new License();
-        license.setLicenseId("L888");
+        var license = License.builder().licenseId("L888").build();
 
         when(messageSource.getMessage(eq("license.update.message"), any(), isNull()))
                 .thenReturn("Updated license: %s");
