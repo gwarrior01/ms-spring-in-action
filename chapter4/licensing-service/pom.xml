@@ -11,7 +11,7 @@
 	<groupId>com.optimagrowth</groupId>
 	<artifactId>licensing-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>License Service</name>
+	<name>Chapter 4 - License Service</name>
 	<description>Ostock Licensing Service</description>
 
 	<properties>
