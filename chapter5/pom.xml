@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
 
 
-  <name>optimagrowth-parent-pom</name>
+  <name>Chapter 5</name>
   <description>Parent Pom for the optimagrowth project</description>
 
     <parent>
