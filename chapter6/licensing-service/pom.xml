@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>club.twopages</groupId>
 	<artifactId>licensing-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>6</version>
 	<name>License Service</name>
 	<description>Ostock Licensing Service</description>
 
@@ -60,6 +60,28 @@
 		<dependency>
 		    <groupId>org.postgresql</groupId>
 		    <artifactId>postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-ribbon</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.netflix.ribbon</groupId>
+					<artifactId>ribbon-eureka</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
 
 		<dependency>
