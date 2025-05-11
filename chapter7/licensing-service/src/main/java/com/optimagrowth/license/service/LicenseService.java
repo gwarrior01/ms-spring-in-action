@@ -11,8 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +45,7 @@ public class LicenseService {
     }
 
     private Organization retrieveOrganizationInfo(String organizationId, String clientType) {
-       return switch (clientType) {
+        return switch (clientType) {
             case "feign" -> {
                 System.out.println("I am using the feign client");
                 yield organizationFeignClient.getOrganization(organizationId);
@@ -80,7 +83,7 @@ public class LicenseService {
     @CircuitBreaker(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
     @RateLimiter(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
     @Retry(name = "retryLicenseService", fallbackMethod = "buildFallbackLicenseList")
-    @Bulkhead(name = "bulkheadLicenseService", type= Type.THREADPOOL, fallbackMethod = "buildFallbackLicenseList")
+    @Bulkhead(name = "bulkheadLicenseService", type = Type.THREADPOOL, fallbackMethod = "buildFallbackLicenseList")
     public List<License> getLicensesByOrganization(String organizationId) throws TimeoutException {
         logger.debug("getLicensesByOrganization Correlation id: {}",
                 UserContextHolder.getContext().getCorrelationId());
@@ -89,7 +92,7 @@ public class LicenseService {
     }
 
     @SuppressWarnings("unused")
-    private List<License> buildFallbackLicenseList(String organizationId, Throwable t){
+    private List<License> buildFallbackLicenseList(String organizationId, Throwable t) {
         List<License> fallbackList = new ArrayList<>();
         License license = new License();
         license.setLicenseId("0000000-00-00000");
@@ -99,12 +102,13 @@ public class LicenseService {
         return fallbackList;
     }
 
-    private void randomlyRunLong() throws TimeoutException{
+    private void randomlyRunLong() throws TimeoutException {
         Random rand = new Random();
         int randomNum = rand.nextInt((3 - 1) + 1) + 1;
-        if (randomNum==3) sleep();
+        if (randomNum == 3) sleep();
     }
-    private void sleep() throws TimeoutException{
+
+    private void sleep() throws TimeoutException {
         try {
             System.out.println("Sleep");
             Thread.sleep(5000);
