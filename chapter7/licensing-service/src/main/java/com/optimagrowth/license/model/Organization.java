@@ -9,10 +9,10 @@ import lombok.ToString;
 @Getter @Setter @ToString
 public class Organization extends RepresentationModel<Organization> {
 
-	String id;
+    String id;
     String name;
     String contactName;
     String contactEmail;
     String contactPhone;
-    
+
 }
