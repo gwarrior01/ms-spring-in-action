@@ -4,7 +4,7 @@
 
   <groupId>club.twopages</groupId>
   <version>0.0.1-SNAPSHOT</version>
-  <artifactId>сhapter-7-pom</artifactId>
+  <artifactId>ostock-parent-pom</artifactId>
   <packaging>pom</packaging>
   <name>Chapter 7</name>
 
