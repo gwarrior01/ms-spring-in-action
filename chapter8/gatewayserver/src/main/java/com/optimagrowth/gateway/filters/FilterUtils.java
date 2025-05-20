@@ -1,12 +1,8 @@
 package com.optimagrowth.gateway.filters;
 
-import java.util.List;
-
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
-@Component
 public class FilterUtils {
 
     public static final String CORRELATION_ID = "tmx-correlation-id";
@@ -17,16 +13,15 @@ public class FilterUtils {
     public static final String POST_FILTER_TYPE = "post";
     public static final String ROUTE_FILTER_TYPE = "route";
 
-    public String getCorrelationId(HttpHeaders requestHeaders) {
-        if (requestHeaders.get(CORRELATION_ID) != null) {
-            List<String> header = requestHeaders.get(CORRELATION_ID);
-            return header.stream().findFirst().get();
-        } else {
-            return null;
+    public static String getCorrelationId(HttpHeaders requestHeaders) {
+        var headers = requestHeaders.get(CORRELATION_ID);
+        if (headers != null && !headers.isEmpty()) {
+            return headers.getFirst();
         }
+        return null;
     }
 
-    public ServerWebExchange setRequestHeader(ServerWebExchange exchange, String name, String value) {
+    public static ServerWebExchange setRequestHeader(ServerWebExchange exchange, String name, String value) {
         return exchange.mutate().request(
                         exchange.getRequest().mutate()
                                 .header(name, value)
@@ -34,8 +29,8 @@ public class FilterUtils {
                 .build();
     }
 
-    public ServerWebExchange setCorrelationId(ServerWebExchange exchange, String correlationId) {
-        return this.setRequestHeader(exchange, CORRELATION_ID, correlationId);
+    public static ServerWebExchange setCorrelationId(ServerWebExchange exchange, String correlationId) {
+        return setRequestHeader(exchange, CORRELATION_ID, correlationId);
     }
 
 }

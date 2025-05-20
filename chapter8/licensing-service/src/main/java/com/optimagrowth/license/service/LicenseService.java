@@ -54,15 +54,15 @@ public class LicenseService {
     private Organization retrieveOrganizationInfo(String organizationId, String clientType) {
         return switch (clientType) {
             case "feign" -> {
-                System.out.println("I am using the feign client");
+                log.info("I am using the feign client");
                 yield organizationFeignClient.getOrganization(organizationId);
             }
             case "rest" -> {
-                System.out.println("I am using the rest client");
+                log.info("I am using the rest client");
                 yield organizationRestClient.getOrganization(organizationId);
             }
             case "discovery" -> {
-                System.out.println("I am using the discovery client");
+                log.info("I am using the discovery client");
                 yield organizationDiscoveryClient.getOrganization(organizationId);
             }
             default -> organizationRestClient.getOrganization(organizationId);
@@ -87,13 +87,13 @@ public class LicenseService {
         return String.format(messages.getMessage("license.delete.message", null, null), licenseId);
     }
 
-    @CircuitBreaker(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
-    @RateLimiter(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
-    @Retry(name = "retryLicenseService", fallbackMethod = "buildFallbackLicenseList")
-    @Bulkhead(name = "bulkheadLicenseService", type = Bulkhead.Type.THREADPOOL, fallbackMethod = "buildFallbackLicenseList")
+//    @CircuitBreaker(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
+//    @RateLimiter(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
+//    @Retry(name = "retryLicenseService", fallbackMethod = "buildFallbackLicenseList")
+//    @Bulkhead(name = "bulkheadLicenseService", type = Bulkhead.Type.THREADPOOL, fallbackMethod = "buildFallbackLicenseList")
     public List<License> getLicensesByOrganization(String organizationId) throws TimeoutException {
         log.info("getLicensesByOrganization Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
-        randomlyRunLong();
+//        randomlyRunLong();
         return licenseRepository.findByOrganizationId(organizationId);
     }
 
