@@ -6,6 +6,24 @@ spring:
   cloud:
     config:
       uri: http://localhost:8071
+    openfeign:
+      client:
+        config:
+          default:
+            logger-level: full
+  security:
+    oauth2:
+      client:
+        registration:
+          license:
+            client-id: license
+            client-secret: 5V49sw624U6ZbCEvtlKxlpGOxnejfUuf
+            authorization-grant-type: client_credentials
+            provider: keycloak
+        provider:
+          keycloak:
+            token-uri: http://localhost:9080/realms/twopages-realm/protocol/openid-connect/token
+
   application:
     name: licensing-service
 

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>club.twopages</groupId>
 	<artifactId>organization-service</artifactId>
-	<version>8</version>
+	<version>9</version>
 	<name>Organization Service</name>
 	<description>Ostock Organization Service</description>
 
