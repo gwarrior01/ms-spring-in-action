@@ -3,6 +3,7 @@ package com.optimagrowth.organization.service;
 import com.optimagrowth.organization.model.Organization;
 import com.optimagrowth.organization.repository.OrganizationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -13,6 +14,7 @@ public class OrganizationService {
 
     private final OrganizationRepository repository;
 
+    @PreAuthorize("hasAuthority('SCOPE_read:organization')")
     public Organization findById(String organizationId) {
         return repository.findById(organizationId).orElse(null);
     }

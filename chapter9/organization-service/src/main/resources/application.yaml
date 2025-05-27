@@ -8,3 +8,8 @@ spring:
       uri: http://localhost:8071
   application:
     name: organization-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9080/realms/twopages-realm/protocol/openid-connect/certs
