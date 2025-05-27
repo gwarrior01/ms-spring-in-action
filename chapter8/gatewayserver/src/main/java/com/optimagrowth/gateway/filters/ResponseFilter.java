@@ -15,7 +15,7 @@ public class ResponseFilter {
         return (exchange, chain) -> chain.filter(exchange).then(Mono.fromRunnable(() -> {
             var requestHeaders = exchange.getRequest().getHeaders();
             var correlationId = FilterUtils.getCorrelationId(requestHeaders);
-            log.info("Adding the correlation id to the outbound headers. {}", correlationId);
+            log.debug("Adding the correlation id to the outbound headers. {}", correlationId);
             exchange.getResponse().getHeaders().add(FilterUtils.CORRELATION_ID, correlationId);
             log.info("Completing outgoing request for {}. correlation id = {}",
                     exchange.getRequest().getURI(),

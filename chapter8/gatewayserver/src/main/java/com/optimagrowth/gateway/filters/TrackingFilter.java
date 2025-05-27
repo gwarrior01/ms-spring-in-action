@@ -30,7 +30,7 @@ public class TrackingFilter implements GlobalFilter {
         } else {
             var correlationID = generateCorrelationId();
             exchange = FilterUtils.setCorrelationId(exchange, correlationID);
-            log.debug("tmx-correlation-id generated in tracking filter: {}", correlationID);
+            log.info("tmx-correlation-id generated in tracking filter: {}", correlationID);
         }
 
         return chain.filter(exchange);
