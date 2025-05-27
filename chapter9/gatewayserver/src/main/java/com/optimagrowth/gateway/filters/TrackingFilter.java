@@ -1,7 +1,7 @@
 package com.optimagrowth.gateway.filters;
 
-import org.apache.commons.codec.binary.Base64;
-import org.json.JSONObject;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,67 +14,35 @@ import org.springframework.web.server.ServerWebExchange;
 
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Order(1)
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class TrackingFilter implements GlobalFilter {
 
-	private static final Logger logger = LoggerFactory.getLogger(TrackingFilter.class);
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        var requestHeaders = exchange.getRequest().getHeaders();
+        if (isCorrelationIdPresent(requestHeaders)) {
+            log.debug("tmx-correlation-id found in tracking filter: {}", FilterUtils.getCorrelationId(requestHeaders));
+        } else {
+            var correlationID = generateCorrelationId();
+            exchange = FilterUtils.setCorrelationId(exchange, correlationID);
+            log.info("tmx-correlation-id generated in tracking filter: {}", correlationID);
+        }
 
-	@Autowired
-	FilterUtils filterUtils;
-
-	@Override
-	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-		HttpHeaders requestHeaders = exchange.getRequest().getHeaders();
-		if (isCorrelationIdPresent(requestHeaders)) {
-			logger.debug("tmx-correlation-id found in tracking filter: {}. ", 
-					filterUtils.getCorrelationId(requestHeaders));
-		} else {
-			String correlationID = generateCorrelationId();
-			exchange = filterUtils.setCorrelationId(exchange, correlationID);
-			logger.debug("tmx-correlation-id generated in tracking filter: {}.", correlationID);
-		}
-		
-		System.out.println("The authentication name from the token is : " + getUsername(requestHeaders));
-		
-		
-		
-		return chain.filter(exchange);
-	}
+        return chain.filter(exchange);
+    }
 
 
-	private boolean isCorrelationIdPresent(HttpHeaders requestHeaders) {
-		if (filterUtils.getCorrelationId(requestHeaders) != null) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    private boolean isCorrelationIdPresent(HttpHeaders requestHeaders) {
+        return FilterUtils.getCorrelationId(requestHeaders) != null;
+    }
 
-	private String generateCorrelationId() {
-		return java.util.UUID.randomUUID().toString();
-	}
-
-	private String getUsername(HttpHeaders requestHeaders){
-		String username = "";
-		if (filterUtils.getAuthToken(requestHeaders)!=null){
-			String authToken = filterUtils.getAuthToken(requestHeaders).replace("Bearer ","");
-	        JSONObject jsonObj = decodeJWT(authToken);
-	        try {
-	        	username = jsonObj.getString("preferred_username");
-	        }catch(Exception e) {logger.debug(e.getMessage());}
-		}
-		return username;
-	}
-
-
-	private JSONObject decodeJWT(String JWTToken) {
-		String[] split_string = JWTToken.split("\\.");
-		String base64EncodedBody = split_string[1];
-		Base64 base64Url = new Base64(true);
-		String body = new String(base64Url.decode(base64EncodedBody));
-		JSONObject jsonObj = new JSONObject(body);
-		return jsonObj;
-	}
+    private String generateCorrelationId() {
+        return UUID.randomUUID().toString();
+    }
 
 }

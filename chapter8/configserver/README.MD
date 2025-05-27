@@ -1,1 +1,1 @@
-docker build . --tag=configserver_7
+docker build . --tag=configserver_8
