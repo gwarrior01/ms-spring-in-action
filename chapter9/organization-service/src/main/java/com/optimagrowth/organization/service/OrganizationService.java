@@ -19,6 +19,7 @@ public class OrganizationService {
         return repository.findById(organizationId).orElse(null);
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_write:organization')")
     public Organization create(Organization organization) {
         organization.setId(UUID.randomUUID().toString());
         return repository.save(organization);
