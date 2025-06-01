@@ -1,19 +1,11 @@
 package com.optimagrowth.license.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.springframework.hateoas.RepresentationModel;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter @Setter @ToString
 @Entity
@@ -41,7 +33,6 @@ public class License extends RepresentationModel<License> {
 	private String contactPhone;
 	@Transient
 	private String contactEmail;
-
 
 	public License withComment(String comment){
 		this.setComment(comment);

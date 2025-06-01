@@ -1,58 +1,40 @@
 package com.optimagrowth.organization.service;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.optimagrowth.organization.events.source.SimpleSourceBean;
+import com.optimagrowth.organization.events.source.Source;
 import com.optimagrowth.organization.model.Organization;
 import com.optimagrowth.organization.repository.OrganizationRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class OrganizationService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
-	
-    @Autowired
-    private OrganizationRepository repository;
-    
-    @Autowired
-    SimpleSourceBean simpleSourceBean;
+
+    private final OrganizationRepository repository;
+    private final Source source;
 
     public Organization findById(String organizationId) {
-    	Optional<Organization> opt = repository.findById(organizationId);
-    	simpleSourceBean.publishOrganizationChange("GET", organizationId);
-        return (opt.isPresent()) ? opt.get() : null;
-    }	
-
-    public Organization create(Organization organization){
-    	organization.setId( UUID.randomUUID().toString());
-        organization = repository.save(organization);
-        simpleSourceBean.publishOrganizationChange("SAVE", organization.getId());
-        return organization;
-
+        var organization = repository.findById(organizationId);
+        source.publishOrganizationChange("GET", organizationId);
+        return organization.orElse(null);
     }
 
-    public void update(Organization organization){
-    	repository.save(organization);
-        simpleSourceBean.publishOrganizationChange("UPDATE", organization.getId());
+    public Organization create(Organization organization) {
+        organization.setId(UUID.randomUUID().toString());
+        var newOrganization = repository.save(organization);
+        source.publishOrganizationChange("SAVE", newOrganization.getId());
+        return newOrganization;
     }
 
-    public void delete(String organizationId){
-    	repository.deleteById(organizationId);
-    	simpleSourceBean.publishOrganizationChange("DELETE", organizationId);
+    public void update(Organization organization) {
+        repository.save(organization);
+        source.publishOrganizationChange("UPDATE", organization.getId());
     }
-    
-    @SuppressWarnings("unused")
-	private void sleep(){
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage());
-		}
-	}
+
+    public void delete(Organization organization) {
+        repository.deleteById(organization.getId());
+        source.publishOrganizationChange("DELETE", organization.getId());
+    }
 }

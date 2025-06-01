@@ -1,27 +1,27 @@
 spring:
-    main:
-      allow-bean-definition-overriding: true
-    application:
-     name: licensing-service 
-    profiles:
-      active: dev
-    cloud:
-        config: 
-            uri: http://configserver:8071
-            
-logging:
-  level:
-    com.netflix: WARN
-    org.springframework.web: WARN
-    com.optimagrowth: DEBUG
+  config:
+    import: "configserver:"
+  profiles:
+    active: dev
+  cloud:
+    config:
+      uri: http://localhost:8071
+    openfeign:
+      client:
+        config:
+          default:
+            logger-level: full
+
+  application:
+    name: licensing-service
 
 resilience4j.circuitbreaker:
   instances:
     licenseService:
       registerHealthIndicator: true
-      ringBufferSizeInClosedState: 5
-      ringBufferSizeInHalfOpenState: 3
-      waitDurationInOpenState: 10s
+      slidingWindowSize: 5
+      permittedNumberOfCallsInHalfOpenState: 3
+      waitDurationInOpenState: 60s
       failureRateThreshold: 50
       recordExceptions:
         - org.springframework.web.client.HttpServerErrorException
@@ -30,8 +30,8 @@ resilience4j.circuitbreaker:
         - org.springframework.web.client.ResourceAccessException
     organizationService:
       registerHealthIndicator: true
-      ringBufferSizeInClosedState: 6
-      ringBufferSizeInHalfOpenState: 4
+      slidingWindowSize: 6
+      permittedNumberOfCallsInHalfOpenState: 4
       waitDurationInOpenState: 20s
       failureRateThreshold: 60
 
@@ -45,17 +45,10 @@ resilience4j.ratelimiter:
 resilience4j.retry:
   instances:
     retryLicenseService:
-      maxRetryAttempts: 5
+      maxAttempts: 5
       waitDuration: 10000
       retry-exceptions:
         - java.util.concurrent.TimeoutException
-
-resilience4j.bulkhead:
-  instances:
-    bulkheadLicenseService:
-      maxWaitDuration: 2ms
-      maxConcurrentCalls: 20
-
 
 resilience4j.thread-pool-bulkhead:
   instances:
