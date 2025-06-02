@@ -1,1 +1,1 @@
-docker build . --tag=eurekaserver_9
+docker build . --tag=eurekaserver_10

@@ -14,13 +14,13 @@ public class OrganizationChangeHandler {
     @Bean
     public Consumer<OrganizationChangeModel> inboundOrgChanges() {
         return organization -> {
-            log.debug("Received a message of type {}", organization.getType());
+            log.info("Received a message of type {}", organization.getType());
 
             switch (organization.getAction()) {
-                case "GET" -> log.debug("Received a GET event for organization id {}", organization.getOrganizationId());
-                case "SAVE" -> log.debug("Received a SAVE event for organization id {}", organization.getOrganizationId());
-                case "UPDATE" -> log.debug("Received an UPDATE event for organization id {}", organization.getOrganizationId());
-                case "DELETE" -> log.debug("Received a DELETE event for organization id {}", organization.getOrganizationId());
+                case "GET" -> log.info("Received a GET event for organization id {}", organization.getOrganizationId());
+                case "SAVE" -> log.info("Received a SAVE event for organization id {}", organization.getOrganizationId());
+                case "UPDATE" -> log.info("Received an UPDATE event for organization id {}", organization.getOrganizationId());
+                case "DELETE" -> log.info("Received a DELETE event for organization id {}", organization.getOrganizationId());
                 default -> log.error("Received an UNKNOWN event of type {}", organization.getType());
             }
         };

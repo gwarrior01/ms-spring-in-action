@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>club.twopages</groupId>
 	<artifactId>eurekaserver</artifactId>
-	<version>9</version>
+	<version>10</version>
 	<name>Eureka Server</name>
 	<description>Eureka Server</description>
 
