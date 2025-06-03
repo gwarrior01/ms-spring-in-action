@@ -56,17 +56,17 @@ services:
       start_period: 60s
       retries: 5
 
-#  redis:
-#    image: redis:8.0.2
-#    restart: "no"
-#    ports:
-#      - "6379:6379"
-#    healthcheck:
-#      test: redis-cli ping
-#      interval: 10s
-#      timeout: 5s
-#      start_period: 10s
-#      retries: 5
+  redis:
+    image: redis:8.0.2
+    restart: "no"
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: redis-cli ping
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
 
 networks:
   backend:

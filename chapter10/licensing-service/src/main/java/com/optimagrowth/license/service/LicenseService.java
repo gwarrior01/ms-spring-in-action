@@ -14,6 +14,7 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
@@ -31,16 +32,14 @@ public class LicenseService {
     private final MessageSource messages;
     private final LicenseRepository licenseRepository;
     private final ServiceConfig config;
-    private final OrganizationFeignClient organizationFeignClient;
-    private final OrganizationRestTemplateClient organizationRestClient;
-    private final OrganizationDiscoveryClient organizationDiscoveryClient;
+    private final OrganizationService organizationService;
 
     public License getLicense(String licenseId, String organizationId, String clientType) {
         var license = licenseRepository.findByOrganizationIdAndLicenseId(organizationId, licenseId);
         if (null == license) {
             throw new IllegalArgumentException(String.format(messages.getMessage("license.search.error.message", null, null), licenseId, organizationId));
         }
-        var organization = retrieveOrganizationInfo(organizationId, clientType);
+        var organization = organizationService.retrieveOrganizationInfo(organizationId, clientType);
         if (null != organization) {
             license.setOrganizationName(organization.getName());
             license.setContactName(organization.getContactName());
@@ -49,24 +48,6 @@ public class LicenseService {
         }
 
         return license.withComment(config.getProperty());
-    }
-
-    private Organization retrieveOrganizationInfo(String organizationId, String clientType) {
-        return switch (clientType) {
-            case "feign" -> {
-                log.info("I am using the feign client");
-                yield organizationFeignClient.getOrganization(organizationId);
-            }
-            case "rest" -> {
-                log.info("I am using the rest client");
-                yield organizationRestClient.getOrganization(organizationId);
-            }
-            case "discovery" -> {
-                log.info("I am using the discovery client");
-                yield organizationDiscoveryClient.getOrganization(organizationId);
-            }
-            default -> organizationRestClient.getOrganization(organizationId);
-        };
     }
 
     public License createLicense(License license) {

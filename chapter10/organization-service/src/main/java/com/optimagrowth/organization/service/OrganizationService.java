@@ -16,25 +16,25 @@ public class OrganizationService {
     private final Source source;
 
     public Organization findById(String organizationId) {
-        var organization = repository.findById(organizationId);
-        source.publishOrganizationChange("GET", organizationId);
-        return organization.orElse(null);
+        var organization = repository.findById(organizationId).orElse(null);
+        source.publishOrganizationChange("GET", organization);
+        return organization;
     }
 
     public Organization create(Organization organization) {
         organization.setId(UUID.randomUUID().toString());
         var newOrganization = repository.save(organization);
-        source.publishOrganizationChange("SAVE", newOrganization.getId());
+        source.publishOrganizationChange("SAVE", newOrganization);
         return newOrganization;
     }
 
     public void update(Organization organization) {
-        repository.save(organization);
-        source.publishOrganizationChange("UPDATE", organization.getId());
+        var saved = repository.save(organization);
+        source.publishOrganizationChange("UPDATE", saved);
     }
 
     public void delete(Organization organization) {
         repository.deleteById(organization.getId());
-        source.publishOrganizationChange("DELETE", organization.getId());
+        source.publishOrganizationChange("DELETE", organization);
     }
 }
