@@ -1,25 +1,54 @@
 package com.optimagrowth.license.events.handler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-
-import com.optimagrowth.license.events.CustomChannels;
 import com.optimagrowth.license.events.model.OrganizationChangeModel;
+import com.optimagrowth.license.model.Organization;
+import com.optimagrowth.license.service.Cache;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@EnableBinding(CustomChannels.class)
+import java.util.function.Consumer;
+
+@Configuration
+@Slf4j
+@RequiredArgsConstructor
 public class OrganizationChangeHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrganizationChangeHandler.class);
+    private final Cache cache;
 
-    @StreamListener("inboundOrgChanges")
-    public void loggerSink(OrganizationChangeModel organization) {
-    	
-        logger.debug("Received a message of type " + organization.getType());
-        logger.debug("Received a message with an event {} from the organization service for the organization id {} ", 
-        		organization.getType(), organization.getType());
+    @Bean
+    public Consumer<OrganizationChangeModel> inboundOrgChanges() {
+        return org -> {
+            log.info("Received a message of type {}", org.getType());
+
+            switch (org.getAction()) {
+                case "GET" -> log.info("Received a GET event for organization id {}", org.getOrganizationId());
+
+                case "SAVE" -> {
+                    cache.updateOrg(org.getOrganizationId(), mapOrganization(org));
+                    log.info("Received a SAVE event for organization id {}", org.getOrganizationId());
+                }
+                case "UPDATE" -> {
+                    cache.updateOrg(org.getOrganizationId(), mapOrganization(org));
+                    log.info("Received an UPDATE event for organization id {}", org.getOrganizationId());
+                }
+                case "DELETE" -> {
+                    cache.evictOrg(org.getOrganizationId());
+                    log.info("Received a DELETE event for organization id {}", org.getOrganizationId());
+                }
+                default -> log.error("Received an UNKNOWN event of type {}", org.getType());
+            }
+        };
     }
 
-
+    private Organization mapOrganization(OrganizationChangeModel org) {
+        var event = new Organization();
+        event.setId(org.getOrganizationId());
+        event.setContactEmail(org.getContactEmail());
+        event.setContactName(org.getContactName());
+        event.setName(org.getName());
+        event.setContactPhone(org.getContactPhone());
+        return event;
+    }
 }

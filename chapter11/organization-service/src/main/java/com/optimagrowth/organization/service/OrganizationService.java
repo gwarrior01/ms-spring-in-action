@@ -1,79 +1,40 @@
 package com.optimagrowth.organization.service;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.optimagrowth.organization.events.source.SimpleSourceBean;
+import com.optimagrowth.organization.events.source.Source;
 import com.optimagrowth.organization.model.Organization;
 import com.optimagrowth.organization.repository.OrganizationRepository;
-import com.optimagrowth.organization.utils.ActionEnum;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import brave.ScopedSpan;
-import brave.Tracer;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class OrganizationService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
-	
-    @Autowired
-    private OrganizationRepository repository;
-    
-    @Autowired
-    SimpleSourceBean simpleSourceBean;
-    
-    @Autowired
-	Tracer tracer;
+
+    private final OrganizationRepository repository;
+    private final Source source;
 
     public Organization findById(String organizationId) {
-    	Optional<Organization> opt = null;
-    	ScopedSpan newSpan = tracer.startScopedSpan("getOrgDBCall");
-    	try {
-    	opt = repository.findById(organizationId);
-    	simpleSourceBean.publishOrganizationChange(ActionEnum.GET, organizationId);
-    	if (!opt.isPresent()) {
-    		String message = String.format("Unable to find an organization with the Organization id %s", organizationId);
-			logger.error(message);
-			throw new IllegalArgumentException(message);	
-		}
-    	logger.debug("Retrieving Organization Info: " + opt.get().toString());
-    	}finally {
-    		newSpan.tag("peer.service", "postgres");
-			newSpan.annotate("Client received");
-			newSpan.finish();
-    	}
-    	return opt.get();
-    }	
-
-    public Organization create(Organization organization){
-    	organization.setId( UUID.randomUUID().toString());
-        organization = repository.save(organization);
-        simpleSourceBean.publishOrganizationChange(ActionEnum.CREATED, organization.getId());
+        var organization = repository.findById(organizationId).orElse(null);
+        source.publishOrganizationChange("GET", organization);
         return organization;
-
     }
 
-    public void update(Organization organization){
-    	repository.save(organization);
-        simpleSourceBean.publishOrganizationChange(ActionEnum.UPDATED, organization.getId());
+    public Organization create(Organization organization) {
+        organization.setId(UUID.randomUUID().toString());
+        var newOrganization = repository.save(organization);
+        source.publishOrganizationChange("SAVE", newOrganization);
+        return newOrganization;
     }
 
-    public void delete(String organizationId){
-    	repository.deleteById(organizationId);
-    	simpleSourceBean.publishOrganizationChange(ActionEnum.DELETED, organizationId);
+    public void update(Organization organization) {
+        var saved = repository.save(organization);
+        source.publishOrganizationChange("UPDATE", saved);
     }
-    
-    @SuppressWarnings("unused")
-	private void sleep(){
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage());
-		}
-	}
+
+    public void delete(Organization organization) {
+        repository.deleteById(organization.getId());
+        source.publishOrganizationChange("DELETE", organization);
+    }
 }
