@@ -8,3 +8,9 @@ spring:
       uri: http://localhost:8071
   application:
     name: organization-service
+
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0  # 100% sampling (use less in production)

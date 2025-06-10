@@ -3,7 +3,6 @@ package com.optimagrowth.license.controller;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import com.optimagrowth.license.utils.UserContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -36,11 +35,11 @@ public class LicenseController {
         return ResponseEntity.ok(license);
     }
 
-    @RequestMapping(value = "/{licenseId}/{clientType}", method = RequestMethod.GET)
+    @GetMapping(value = "/{licenseId}/{clientType}")
     public License getLicensesWithClient(@PathVariable("organizationId") String organizationId,
                                          @PathVariable("licenseId") String licenseId,
                                          @PathVariable("clientType") String clientType) {
-        log.info("LicenseServiceController Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
+        log.info("LicenseServiceController GET /v1/organization/{organizationId}/license/{licenseId}/{clientType}");
         return licenseService.getLicense(licenseId, organizationId, clientType);
     }
 
@@ -61,7 +60,7 @@ public class LicenseController {
 
     @GetMapping
     public List<License> getLicenses(@PathVariable("organizationId") String organizationId) throws Exception {
-        log.info("LicenseServiceController Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
+        log.info("LicenseServiceController GET /v1/organization/{organizationId}/license");
         return licenseService.getLicensesByOrganization(organizationId);
     }
 }

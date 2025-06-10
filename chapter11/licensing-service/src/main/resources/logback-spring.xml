@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty scope="context" name="application_name" source="spring.application.name"/>
+    <appender name="TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>127.0.0.1:5050</destination>
+        <includeCallerData>true</includeCallerData>
+        <reconnectionDelay>5000</reconnectionDelay>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <omitEmptyFields>true</omitEmptyFields>
+                    <pattern>
+                        {
+                        "appName": "%property{application_name}",
+                        "threadName": "%thread",
+                        "loggerName": "%logger",
+                        "text": "%message",
+                        "level": "%level",
+                        "traceId": "%mdc{trace_id}",
+                        "spanId": "%mdc{span_id}"
+                        }
+                    </pattern>
+                </pattern>
+                <uuid>
+                    <fieldName>eventId</fieldName>
+                </uuid>
+                <timestamp>
+                    <pattern>yyyy-MM-dd'T'HH:mm:ss.SSS</pattern>
+                    <fieldName>localTime</fieldName>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <logLevelValue>
+                    <fieldName>levelInt</fieldName>
+                </logLevelValue>
+                <arguments>
+                    <includeNonStructuredArguments>false</includeNonStructuredArguments>
+                </arguments>
+                <stackTrace>
+                    <fieldName>stack</fieldName>
+                </stackTrace>
+                <mdc>
+                    <fieldName>mdc</fieldName>
+                    <excludeMdcKeyName>agrType</excludeMdcKeyName>
+                    <excludeMdcKeyName>eventId</excludeMdcKeyName>
+                </mdc>
+            </providers>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS}[%thread]%highlight(%-5level) %cyan(%logger{36}) %magenta(%replace( traceId=%mdc{trace_id}){'^ traceId=$', ''}) - %msg{}%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="TCP"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

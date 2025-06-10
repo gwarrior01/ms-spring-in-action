@@ -18,6 +18,8 @@
 		<java.version>21</java.version>
 		<spring-cloud.version>2024.0.1</spring-cloud.version>
 		<resilience4j.version>2.3.0</resilience4j.version>
+		<micrometer-tracing.version>1.4.6</micrometer-tracing.version>
+		<logstash-encoder.version>8.1</logstash-encoder.version>
 	</properties>
 
 	<dependencies>
@@ -120,6 +122,20 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>${logstash-encoder.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.uuid</groupId>
+			<artifactId>java-uuid-generator</artifactId>
+			<version>5.1.0</version> <!-- Убедитесь в актуальности версии -->
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-tracing-bridge-otel</artifactId>
+		</dependency>
 
 	</dependencies>
 	
@@ -135,7 +151,14 @@
 			<dependency>
 				<groupId>io.github.resilience4j</groupId>
 				<artifactId>resilience4j-bom</artifactId>
-				<version>2.3.0</version>
+				<version>${resilience4j.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.micrometer</groupId>
+				<artifactId>micrometer-tracing-bom</artifactId>
+				<version>${micrometer-tracing.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

@@ -3,7 +3,6 @@ package com.optimagrowth.license;
 import java.util.Locale;
 
 import com.optimagrowth.license.config.ServiceConfig;
-import com.optimagrowth.license.utils.UserContextInterceptor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,9 +44,7 @@ public class LicenseServiceApplication {
 	@LoadBalanced
 	@Bean
 	public RestTemplate getRestTemplate(){
-		var template = new RestTemplate();
-		template.getInterceptors().add(new UserContextInterceptor());
-		return template;
+		return new RestTemplate();
 	}
 
 }

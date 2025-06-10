@@ -1,6 +1,5 @@
 package com.optimagrowth.organization.controller;
 
-import com.optimagrowth.organization.utils.UserContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,7 @@ public class OrganizationController {
 
     @GetMapping(value = "/{organizationId}")
     public ResponseEntity<Organization> getOrganization(@PathVariable("organizationId") String organizationId) {
-        log.info("OrganizationController Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
+        log.info("OrganizationController GET /v1/organization/{organizationId}");
         return ResponseEntity.ok(service.findById(organizationId));
     }
 
